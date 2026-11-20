@@ -220,7 +220,7 @@
             margin-bottom: 0.75rem; 
         }
 
-        input[type="text"], input[type="number"], textarea, select {
+        input[type="text"], input[type="email"], input[type="number"], textarea, select {
             width: 100%;
             padding: 0.6rem;
             border: 1px solid var(--border);
@@ -288,6 +288,12 @@
             border-left-color: var(--success);
         }
 
+        .contact-link {
+            color: var(--primary);
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
         /* =========================================
            EQUIPO Y FOOTER
            ========================================= */
@@ -301,6 +307,14 @@
             padding: 0.75rem 1rem;
             background: var(--bg-light);
             border-left: 3px solid var(--accent);
+            font-size: 0.95rem;
+        }
+
+        .contact-box {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: #e8f0f7;
+            border: 1px solid var(--border);
             font-size: 0.95rem;
         }
 
@@ -328,14 +342,14 @@
     <header>
         <h1>Uso de Asistentes de Inteligencia Artificial Generativa y Exposición de Datos Personales y Académicos</h1>
         <p>Instrumento de Recolección de Información</p>
-        <span class="institution">Universidad Nacional de Chimborazo - Facultad de Ingenieria<br>Carrera de Ciencia de Datos e Inteligencia Artificial - Periodo 2026-2S</span>
+        <span class="institution">Universidad Nacional de Chimborazo - Facultad de Ingeniería<br>Carrera de Ciencia de Datos e Inteligencia Artificial - Periodo 2026-2S</span>
     </header>
 
     <nav>
         <ul>
             <li><a href="#ficha">Ficha de Investigación</a></li>
             <li><a href="#cuestionario">Cuestionario</a></li>
-            <li><a href="#equipo">Integrantes</a></li>
+            <li><a href="#equipo">Integrantes y Contacto</a></li>
         </ul>
     </nav>
 
@@ -366,13 +380,13 @@
                 <div class="card">
                     <h4>4. Técnica, Instrumento e Ítems</h4>
                     <p><strong>Técnica:</strong> Encuesta.</p>
-                    <p><strong>Instrumento:</strong> Cuestionario cerrado y anónimo.</p>
+                    <p><strong>Instrumento:</strong> Cuestionario estructurado y confidencial.</p>
                     <p><strong>Ítems principales:</strong> Frecuencia de uso de IA, tipos de datos compartidos, lectura de políticas de privacidad y conocimiento sobre el uso de datos para entrenamiento de modelos.</p>
                 </div>
                 <div class="card">
                     <h4>5. Calidad y Ética</h4>
                     <p><strong>Calidad:</strong> Prueba piloto con 3 o 4 estudiantes de otro paralelo, para verificar que las preguntas sean claras y medir el tiempo de respuesta.</p>
-                    <p><strong>Ética:</strong> Consentimiento informado al inicio del formulario y encuesta anónima, sin recoger nombres ni correos electrónicos.</p>
+                    <p><strong>Ética:</strong> Consentimiento informado y registro de correo electrónico al inicio para validación de participación única; los datos se tratan bajo estricta confidencialidad académica sin recoger nombres ni números de cédula.</p>
                 </div>
             </div>
         </section>
@@ -381,25 +395,34 @@
         <section id="cuestionario">
             <h2>Cuestionario</h2>
             
-            <!-- INTRO Y CONSENTIMIENTO -->
+            <!-- INTRO, CORREO Y CONSENTIMIENTO -->
             <div id="intro-section">
                 <div class="alert alert-info">
                     <strong>Propósito:</strong> Esta encuesta tiene como objetivo conocer la frecuencia de uso de asistentes de inteligencia artificial generativa y el tipo de información que los estudiantes comparten con estas herramientas.<br><br>
                     <strong>Duración estimada:</strong> 4 a 6 minutos.<br><br>
-                    <strong>Privacidad:</strong> La encuesta es totalmente anónima. No se recopilan nombres, números de cédula ni correos electrónicos. Los datos serán utilizados exclusivamente con fines académicos.<br><br>
-                    <strong>Consentimiento:</strong> Al continuar, usted declara haber leído la información anterior y acepta participar voluntariamente en este estudio.
+                    <strong>Privacidad y Confidencialidad:</strong> No se recopilan nombres ni números de cédula. Se solicita su correo electrónico únicamente para validar la participación en la prueba y evitar respuestas duplicadas. Los datos serán tratados de forma confidencial y utilizados exclusivamente con fines académicos.<br><br>
+                    <strong>Contacto:</strong> En caso de tener preguntas o inquietudes sobre este estudio, puede comunicarse al correo <a href="mailto:diego.patino@unach.edu.ec" class="contact-link">diego.patino@unach.edu.ec</a>.<br><br>
+                    <strong>Consentimiento:</strong> Al ingresar su correo y continuar, usted declara haber leído la información anterior y acepta participar voluntariamente en este estudio.
                 </div>
+
+                <div class="form-group">
+                    <label for="respondent-email" class="question-text">Correo electrónico institucional o personal (obligatorio para realizar la prueba):</label>
+                    <input type="email" id="respondent-email" placeholder="ejemplo@unach.edu.ec" required>
+                    <span id="email-error" class="question-type" style="color: var(--danger); margin-top: 0.4rem; display: none;">Por favor, ingrese un correo electrónico válido.</span>
+                </div>
+
                 <div class="form-group">
                     <label class="option-label">
                         <input type="checkbox" id="consent-check">
                         He leído la información anterior y acepto participar voluntariamente en esta encuesta.
                     </label>
                 </div>
-                <button id="btn-start" disabled>Iniciar Cuestionario</button>
+                <button type="button" id="btn-start" disabled>Iniciar Cuestionario</button>
             </div>
 
             <!-- FORMULARIO PRINCIPAL -->
             <form id="survey-form" class="hidden">
+                <input type="hidden" name="correo_participante" id="hidden-email">
                 
                 <!-- FILTROS -->
                 <div id="filter-section">
@@ -413,12 +436,12 @@
 
                     <div id="f2-group" class="form-group hidden">
                         <p class="question-text">2. ¿Ha utilizado alguna vez un asistente de inteligencia artificial generativa (ChatGPT, Gemini, Copilot u otro) en los últimos 30 días?</p>
-                        <label class="option-label"><input type="radio" name="f2" value="si" required> Sí</label>
+                        <label class="option-label"><input type="radio" name="f2" value="si"> Sí</label>
                         <label class="option-label"><input type="radio" name="f2" value="no"> No</label>
                     </div>
 
                     <div id="filter-reject" class="alert alert-danger hidden">
-                        Agradecemos su interés, pero esta encuesta está dirigida únicamente a estudiantes del paralelo C de la carrera de Ciencia de Datos e IA.
+                        Agradecemos su interés, pero esta encuesta está dirigida únicamente a estudiantes del paralelo C de la carrera de Ciencia de Datos e IA. Si tiene dudas, escriba a <a href="mailto:diego.patino@unach.edu.ec" class="contact-link">diego.patino@unach.edu.ec</a>.
                     </div>
                 </div>
 
@@ -429,13 +452,13 @@
                     <div class="form-group">
                         <p class="question-text">3. En los últimos 7 días, ¿cuántos días utilizó un asistente de inteligencia artificial para sus actividades académicas?</p>
                         <span class="question-type">Tipo de pregunta: Numérica (ingrese un valor entre 0 y 7)</span>
-                        <input type="number" name="p1" min="0" max="7" required>
+                        <input type="number" name="p1" min="0" max="7">
                     </div>
 
                     <div class="form-group">
                         <p class="question-text">4. ¿Cuál es el asistente de inteligencia artificial que utiliza con mayor frecuencia?</p>
                         <span class="question-type">Tipo de pregunta: Nominal</span>
-                        <select name="p2" required>
+                        <select name="p2">
                             <option value="">Seleccione una opción</option>
                             <option value="chatgpt">ChatGPT</option>
                             <option value="gemini">Gemini</option>
@@ -448,7 +471,7 @@
                     <div class="form-group">
                         <p class="question-text">5. ¿Con qué frecuencia utiliza el asistente de inteligencia artificial para tareas académicas?</p>
                         <span class="question-type">Tipo de pregunta: Ordinal</span>
-                        <label class="option-label"><input type="radio" name="p3" value="1" required> Nunca</label>
+                        <label class="option-label"><input type="radio" name="p3" value="1"> Nunca</label>
                         <label class="option-label"><input type="radio" name="p3" value="2"> Rara vez</label>
                         <label class="option-label"><input type="radio" name="p3" value="3"> A veces</label>
                         <label class="option-label"><input type="radio" name="p3" value="4"> Casi siempre</label>
@@ -475,14 +498,14 @@
                     <div class="form-group">
                         <p class="question-text">7. ¿Ha leído la política de privacidad del asistente de inteligencia artificial que utiliza?</p>
                         <span class="question-type">Tipo de pregunta: Dicotómica</span>
-                        <label class="option-label"><input type="radio" name="p7" value="si" required> Sí</label>
+                        <label class="option-label"><input type="radio" name="p7" value="si"> Sí</label>
                         <label class="option-label"><input type="radio" name="p7" value="no"> No</label>
                     </div>
 
                     <div class="form-group">
                         <p class="question-text">8. ¿Sabe si sus conversaciones con el asistente de inteligencia artificial pueden ser utilizadas para entrenar el modelo?</p>
                         <span class="question-type">Tipo de pregunta: Nominal</span>
-                        <label class="option-label"><input type="radio" name="p8" value="si" required> Sí</label>
+                        <label class="option-label"><input type="radio" name="p8" value="si"> Sí</label>
                         <label class="option-label"><input type="radio" name="p8" value="no"> No</label>
                         <label class="option-label"><input type="radio" name="p8" value="noseguro"> No estoy seguro</label>
                     </div>
@@ -490,7 +513,7 @@
                     <div class="form-group">
                         <p class="question-text">9. Indique su nivel de acuerdo con la siguiente afirmación: "Confío en que el asistente de inteligencia artificial protege la información que le comparto."</p>
                         <span class="question-type">Tipo de pregunta: Escala de Likert</span>
-                        <label class="option-label"><input type="radio" name="p9" value="1" required> Muy en desacuerdo</label>
+                        <label class="option-label"><input type="radio" name="p9" value="1"> Muy en desacuerdo</label>
                         <label class="option-label"><input type="radio" name="p9" value="2"> En desacuerdo</label>
                         <label class="option-label"><input type="radio" name="p9" value="3"> Neutral</label>
                         <label class="option-label"><input type="radio" name="p9" value="4"> De acuerdo</label>
@@ -520,14 +543,14 @@
 
                 <!-- MENSAJE ÉXITO -->
                 <div id="success-message" class="alert alert-success hidden" style="margin-top: 2rem;">
-                    <strong>Agradecemos su participación.</strong> Sus respuestas han sido registradas de forma anónima y serán utilizadas exclusivamente con fines académicos.
+                    <strong>Agradecemos su participación.</strong> Sus respuestas han sido registradas bajo el correo <span id="registered-email" style="font-weight: bold;"></span> y serán utilizadas exclusivamente con fines académicos. Para cualquier consulta, comuníquese a <a href="mailto:diego.patino@unach.edu.ec" class="contact-link">diego.patino@unach.edu.ec</a>.
                 </div>
             </form>
         </section>
 
-        <!-- SECCIÓN 3: EQUIPO -->
+        <!-- SECCIÓN 3: EQUIPO Y CONTACTO -->
         <section id="equipo">
-            <h2>Integrantes del Grupo 1</h2>
+            <h2>Integrantes del Grupo 1 y Contacto</h2>
             <div class="team-list">
                 <div class="team-member">Jordy Chuquimarca</div>
                 <div class="team-member">Diego Patiño (Representante)</div>
@@ -535,14 +558,17 @@
                 <div class="team-member">Carlos Narváez</div>
                 <div class="team-member">Jack Logacho</div>
             </div>
+            <div class="contact-box">
+                <strong>Contacto para consultas o soporte:</strong> En caso de preguntas sobre el instrumento o la investigación, comuníquese al correo institucional del representante: <a href="mailto:diego.patino@unach.edu.ec" class="contact-link">diego.patino@unach.edu.ec</a>
+            </div>
         </section>
     </main>
 
     <footer>
-        <p>Universidad Nacional de Chimborazo - Facultad de Informática y Electrónica<br>
+        <p>Universidad Nacional de Chimborazo - Facultad de Ingeniería<br>
         Carrera de Ciencia de Datos e Inteligencia Artificial<br>
-        Asignatura: Fundamentos de Investigación - Taller 2, Unidad 2, Tema 2, Sesión 2<br>
-        Periodo Académico 2026-2S</p>
+        Asignatura: Fundamentos de Investigación - Taller 2, Unidad 2, Tema 2, Sesión 2 | Periodo Académico 2026-2S<br>
+        Contacto: <a href="mailto:diego.patino@unach.edu.ec" style="color: var(--primary);">diego.patino@unach.edu.ec</a></p>
     </footer>
 
     <script>
@@ -550,24 +576,46 @@
         // LÓGICA DEL CUESTIONARIO
         // =========================================
         
-        // 1. Consentimiento
+        // 1. Validación de Correo y Consentimiento
+        const emailInput = document.getElementById('respondent-email');
+        const emailError = document.getElementById('email-error');
         const consentCheck = document.getElementById('consent-check');
         const btnStart = document.getElementById('btn-start');
         const introSection = document.getElementById('intro-section');
         const surveyForm = document.getElementById('survey-form');
         const filterSection = document.getElementById('filter-section');
+        const hiddenEmail = document.getElementById('hidden-email');
 
-        consentCheck.addEventListener('change', (e) => {
-            btnStart.disabled = !e.target.checked;
-        });
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+        }
+
+        function updateStartButtonState() {
+            const emailVal = emailInput.value.trim();
+            const valid = isValidEmail(emailVal);
+            
+            if (emailVal.length > 0 && !valid) {
+                emailError.style.display = 'block';
+            } else {
+                emailError.style.display = 'none';
+            }
+
+            btnStart.disabled = !(valid && consentCheck.checked);
+        }
+
+        emailInput.addEventListener('input', updateStartButtonState);
+        consentCheck.addEventListener('change', updateStartButtonState);
 
         btnStart.addEventListener('click', () => {
+            if (!isValidEmail(emailInput.value) || !consentCheck.checked) return;
+            
+            hiddenEmail.value = emailInput.value.trim();
             introSection.classList.add('hidden');
             surveyForm.classList.remove('hidden');
             filterSection.classList.remove('hidden');
         });
 
-        // 2. Filtros (Lógica de saltos)
+        // 2. Filtros (Lógica de saltos y campos requeridos dinámicos)
         const f1Radios = document.querySelectorAll('input[name="f1"]');
         const f2Group = document.getElementById('f2-group');
         const f2Radios = document.querySelectorAll('input[name="f2"]');
@@ -576,6 +624,20 @@
         const bloqueB = document.getElementById('bloque-b');
         const datosContexto = document.getElementById('datos-contexto');
         const submitSection = document.getElementById('submit-section');
+
+        function setBlocksRequired(isRequired) {
+            const fields = [
+                document.querySelector('input[name="p1"]'),
+                document.querySelector('select[name="p2"]'),
+                document.querySelector('input[name="p3"]'),
+                document.querySelector('input[name="p7"]'),
+                document.querySelector('input[name="p8"]'),
+                document.querySelector('input[name="p9"]')
+            ];
+            fields.forEach(field => {
+                if (field) field.required = isRequired;
+            });
+        }
 
         f1Radios.forEach(radio => {
             radio.addEventListener('change', (e) => {
@@ -586,9 +648,12 @@
                     bloqueB.classList.add('hidden');
                     datosContexto.classList.add('hidden');
                     submitSection.classList.add('hidden');
+                    f2Radios[0].required = false;
+                    setBlocksRequired(false);
                 } else {
                     filterReject.classList.add('hidden');
                     f2Group.classList.remove('hidden');
+                    f2Radios[0].required = true;
                 }
             });
         });
@@ -598,11 +663,13 @@
                 if (e.target.value === 'no') {
                     bloqueA.classList.add('hidden');
                     bloqueB.classList.add('hidden');
+                    setBlocksRequired(false);
                     datosContexto.classList.remove('hidden');
                     submitSection.classList.remove('hidden');
                 } else {
                     bloqueA.classList.remove('hidden');
                     bloqueB.classList.remove('hidden');
+                    setBlocksRequired(true);
                     datosContexto.classList.remove('hidden');
                     submitSection.classList.remove('hidden');
                 }
@@ -612,6 +679,7 @@
         // 3. Envío del formulario
         surveyForm.addEventListener('submit', (e) => {
             e.preventDefault();
+            document.getElementById('registered-email').textContent = hiddenEmail.value;
             submitSection.classList.add('hidden');
             document.getElementById('success-message').classList.remove('hidden');
             document.getElementById('success-message').scrollIntoView({ behavior: 'smooth' });

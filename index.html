@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taller 2 - Grupo 1 | Fundamentos de Investigación</title>
+    <meta name="description" content="Instrumento de recolección de datos: Uso de IA generativa y exposición de datos personales. UNACH 2026-2S.">
+    <style>
+        /* =========================================
+           VARIABLES Y RESET
+           ========================================= */
+        :root {
+            --primary: #0f4c81;
+            --primary-dark: #0a355c;
+            --secondary: #20c997;
+            --bg-light: #f8f9fa;
+            --bg-white: #ffffff;
+            --text-main: #212529;
+            --text-muted: #6c757d;
+            --border: #dee2e6;
+            --danger: #dc3545;
+            --success: #28a745;
+            --shadow: 0 4px 6px rgba(0,0,0,0.05);
+            --radius: 8px;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-light);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        /* =========================================
+           LAYOUT & HEADER
+           ========================================= */
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 3rem 1.5rem;
+            text-align: center;
+        }
+
+        header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        header p { font-size: 1.1rem; opacity: 0.9; }
+        header .badge {
+            display: inline-block;
+            background: var(--secondary);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+            font-weight: 600;
+        }
+
+        nav {
+            background: var(--bg-white);
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        nav ul {
+            display: flex;
+            justify-content: center;
+            list-style: none;
+            padding: 1rem;
+            gap: 2rem;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 600;
+            transition: color 0.3s;
+        }
+
+        nav a:hover { color: var(--primary); }
+
+        main {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        section {
+            background: var(--bg-white);
+            border-radius: var(--radius);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: var(--shadow);
+        }
+
+        h2 {
+            color: var(--primary);
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h3 { color: var(--primary-dark); margin: 1.5rem 0 1rem; }
+
+        /* =========================================
+           FICHA TÉCNICA (CARDS)
+           ========================================= */
+        .ficha-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .card {
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+
+        .card h4 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .card p, .card ul { font-size: 0.95rem; color: var(--text-muted); }
+        .card ul { padding-left: 1.2rem; }
+
+        /* =========================================
+           FORMULARIO / CUESTIONARIO
+           ========================================= */
+        .form-group { margin-bottom: 1.5rem; }
+        
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-main);
+        }
+
+        .question-text { font-size: 1.05rem; margin-bottom: 0.75rem; }
+        .question-type { 
+            font-size: 0.8rem; 
+            color: var(--text-muted); 
+            font-style: italic; 
+            display: block; 
+            margin-bottom: 0.5rem; 
+        }
+
+        input[type="text"], input[type="number"], textarea, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-family: inherit;
+            font-size: 1rem;
+        }
+
+        input[type="radio"], input[type="checkbox"] {
+            margin-right: 0.5rem;
+            accent-color: var(--primary);
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover { background: var(--primary-dark); }
+        button:disabled { background: var(--text-muted); cursor: not-allowed; }
+
+        .hidden { display: none !important; }
+
+        .alert {
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+        .alert-info { background: #e7f1ff; color: #004085; border: 1px solid #b8daff; }
+        .alert-danger { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+
+        /* =========================================
+           FOOTER & TEAM
+           ========================================= */
+        .team-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .team-member {
+            background: var(--bg-light);
+            padding: 1rem 1.5rem;
+            border-radius: 50px;
+            font-weight: 600;
+            color: var(--primary);
+            border: 1px solid var(--border);
+        }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            border-top: 1px solid var(--border);
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 600px) {
+            nav ul { flex-direction: column; gap: 1rem; text-align: center; }
+            header h1 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Uso de IA Generativa y Exposición de Datos</h1>
+        <p>Instrumento de Recolección de Información | Fundamentos de Investigación</p>
+        <span class="badge">UNACH - 2026-2S | Paralelo C</span>
+    </header>
+
+    <nav>
+        <ul>
+            <li><a href="#ficha">Ficha Técnica</a></li>
+            <li><a href="#cuestionario">Cuestionario</a></li>
+            <li><a href="#equipo">Equipo</a></li>
+        </ul>
+    </nav>
+
+    <main>
+        <!-- SECCIÓN 1: FICHA TÉCNICA -->
+        <section id="ficha">
+            <h2>📋 Ficha de Investigación</h2>
+            <div class="ficha-grid">
+                <div class="card">
+                    <h4>1. Pregunta y Variables</h4>
+                    <p><strong>Pregunta:</strong> ¿Qué porcentaje de estudiantes comparte datos personales/académicos con IA generativa?</p>
+                    <ul>
+                        <li><strong>V. Independiente:</strong> Uso de asistentes de IA (días/semana).</li>
+                        <li><strong>V. Dependiente:</strong> Exposición de datos personales y académicos.</li>
+                    </ul>
+                </div>
+                <div class="card">
+                    <h4>2. Diseño y Momento</h4>
+                    <p>No experimental, transversal, descriptivo-correlacional. Se mide el comportamiento tal como ocurre en un solo momento.</p>
+                </div>
+                <div class="card">
+                    <h4>3. Población y Muestra</h4>
+                    <p><strong>Población:</strong> Estudiantes de 1er semestre CDIA, UNACH 2026-2S.</p>
+                    <p><strong>Muestra:</strong> Paralelo C (Muestreo no probabilístico por conveniencia).</p>
+                </div>
+                <div class="card">
+                    <h4>4. Técnica e Instrumento</h4>
+                    <p><strong>Técnica:</strong> Encuesta.</p>
+                    <p><strong>Instrumento:</strong> Cuestionario cerrado y anónimo.</p>
+                </div>
+                <div class="card">
+                    <h4>5. Calidad y Ética</h4>
+                    <p>Prueba piloto con 3-4 estudiantes de otro paralelo. Consentimiento informado y anonimato garantizado (sin correos ni nombres).</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECCIÓN 2: CUESTIONARIO -->
+        <section id="cuestionario">
+            <h2>📝 Cuestionario Interactivo</h2>
+            
+            <!-- INTRO Y CONSENTIMIENTO -->
+            <div id="intro-section">
+                <div class="alert alert-info">
+                    <strong>Propósito:</strong> Conocer la frecuencia de uso de IA y la exposición de datos.<br>
+                    <strong>Duración:</strong> 4-6 minutos.<br>
+                    <strong>Privacidad:</strong> Totalmente anónima. No se recopilan nombres ni correos.
+                </div>
+                <div class="form-group">
+                    <label class="option-label">
+                        <input type="checkbox" id="consent-check">
+                        He leído la información anterior y acepto participar voluntariamente.
+                    </label>
+                </div>
+                <button id="btn-start" disabled>Comenzar Encuesta</button>
+            </div>
+
+            <!-- FORMULARIO PRINCIPAL -->
+            <form id="survey-form" class="hidden">
+                
+                <!-- FILTROS -->
+                <div id="filter-section">
+                    <h3>Filtros de Participación</h3>
+                    
+                    <div class="form-group">
+                        <p class="question-text">F1. ¿Eres estudiante activo del primer semestre de CDIA, paralelo C, periodo 2026-2S?</p>
+                        <label class="option-label"><input type="radio" name="f1" value="si" required> Sí</label>
+                        <label class="option-label"><input type="radio" name="f1" value="no"> No</label>
+                    </div>
+
+                    <div id="f2-group" class="form-group hidden">
+                        <p class="question-text">F2. ¿Has utilizado alguna vez un asistente de IA generativa en los últimos 30 días?</p>
+                        <label class="option-label"><input type="radio" name="f2" value="si" required> Sí</label>
+                        <label class="option-label"><input type="radio" name="f2" value="no"> No</label>
+                    </div>
+
+                    <div id="filter-reject" class="alert alert-danger hidden">
+                        Gracias por tu interés, pero esta encuesta está dirigida únicamente al paralelo C / usuarios de IA.
+                    </div>
+                </div>
+
+                <!-- BLOQUE A: Frecuencia -->
+                <div id="bloque-a" class="hidden">
+                    <h3>Bloque A: Frecuencia de uso</h3>
+                    
+                    <div class="form-group">
+                        <p class="question-text">P1. En los últimos 7 días, ¿cuántos días usaste un asistente de IA para actividades académicas?</p>
+                        <span class="question-type">Tipo: Numérica (0 a 7)</span>
+                        <input type="number" name="p1" min="0" max="7" required>
+                    </div>
+
+                    <div class="form-group">
+                        <p class="question-text">P2. ¿Cuál es el asistente de IA que usas con mayor frecuencia?</p>
+                        <span class="question-type">Tipo: Nominal</span>
+                        <select name="p2" required>
+                            <option value="">Selecciona una opción</option>
+                            <option value="chatgpt">ChatGPT</option>
+                            <option value="gemini">Gemini</option>
+                            <option value="copilot">Microsoft Copilot</option>
+                            <option value="claude">Claude</option>
+                            <option value="otro">Otro</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <p class="question-text">P3. ¿Con qué frecuencia usas el asistente de IA para tareas académicas?</p>
+                        <span class="question-type">Tipo: Ordinal</span>
+                        <label class="option-label"><input type="radio" name="p3" value="1" required> Nunca</label>
+                        <label class="option-label"><input type="radio" name="p3" value="2"> Rara vez</label>
+                        <label class="option-label"><input type="radio" name="p3" value="3"> A veces</label>
+                        <label class="option-label"><input type="radio" name="p3" value="4"> Casi siempre</label>
+                        <label class="option-label"><input type="radio" name="p3" value="5"> Siempre</label>
+                    </div>
+                </div>
+
+                <!-- BLOQUE B: Exposición de datos -->
+                <div id="bloque-b" class="hidden">
+                    <h3>Bloque B: Exposición de datos y Conciencia</h3>
+                    
+                    <div class="form-group">
+                        <p class="question-text">P4. ¿Cuáles de estos datos has ingresado alguna vez en un asistente de IA? (Selección múltiple)</p>
+                        <span class="question-type">Tipo: Nominal</span>
+                        <label class="option-label"><input type="checkbox" name="p4" value="nombre"> Nombre completo</label>
+                        <label class="option-label"><input type="checkbox" name="p4" value="cedula"> Número de cédula</label>
+                        <label class="option-label"><input type="checkbox" name="p4" value="correo"> Correo electrónico</label>
+                        <label class="option-label"><input type="checkbox" name="p4" value="telefono"> Número de teléfono</label>
+                        <label class="option-label"><input type="checkbox" name="p4" value="tareas"> Tareas completas</label>
+                        <label class="option-label"><input type="checkbox" name="p4" value="codigo"> Código fuente propio</label>
+                        <label class="option-label"><input type="checkbox" name="p4" value="ninguno"> Ninguno</label>
+                    </div>
+
+                    <div class="form-group">
+                        <p class="question-text">P7. ¿Has leído la política de privacidad del asistente de IA que usas?</p>
+                        <span class="question-type">Tipo: Dicotómica</span>
+                        <label class="option-label"><input type="radio" name="p7" value="si" required> Sí</label>
+                        <label class="option-label"><input type="radio" name="p7" value="no"> No</label>
+                    </div>
+
+                    <div class="form-group">
+                        <p class="question-text">P8. ¿Sabes si tus conversaciones pueden usarse para entrenar el modelo?</p>
+                        <span class="question-type">Tipo: Nominal</span>
+                        <label class="option-label"><input type="radio" name="p8" value="si" required> Sí</label>
+                        <label class="option-label"><input type="radio" name="p8" value="no"> No</label>
+                        <label class="option-label"><input type="radio" name="p8" value="noseguro"> No estoy seguro</label>
+                    </div>
+
+                    <div class="form-group">
+                        <p class="question-text">P9. "Confío en que el asistente de IA protege la información que le comparto."</p>
+                        <span class="question-type">Tipo: Likert</span>
+                        <label class="option-label"><input type="radio" name="p9" value="1" required> Muy en desacuerdo</label>
+                        <label class="option-label"><input type="radio" name="p9" value="2"> En desacuerdo</label>
+                        <label class="option-label"><input type="radio" name="p9" value="3"> Neutral</label>
+                        <label class="option-label"><input type="radio" name="p9" value="4"> De acuerdo</label>
+                        <label class="option-label"><input type="radio" name="p9" value="5"> Muy de acuerdo</label>
+                    </div>
+                </div>
+
+                <!-- DATOS DE CONTEXTO -->
+                <div id="datos-contexto" class="hidden">
+                    <h3>Datos de Contexto</h3>
+                    <div class="form-group">
+                        <p class="question-text">C1. ¿Cuál es tu rango de edad?</p>
+                        <select name="c1" required>
+                            <option value="">Selecciona</option>
+                            <option value="16-18">16 - 18 años</option>
+                            <option value="19-21">19 - 21 años</option>
+                            <option value="22-25">22 - 25 años</option>
+                            <option value="26+">26 o más</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- BOTÓN ENVIAR -->
+                <div id="submit-section" class="hidden" style="margin-top: 2rem; text-align: center;">
+                    <button type="submit">Enviar Respuestas</button>
+                </div>
+
+                <!-- MENSAJE ÉXITO -->
+                <div id="success-message" class="alert alert-success hidden" style="margin-top: 2rem;">
+                    <strong>¡Gracias por tu participación!</strong> Tus respuestas han sido registradas de forma anónima.
+                </div>
+            </form>
+        </section>
+
+        <!-- SECCIÓN 3: EQUIPO -->
+        <section id="equipo">
+            <h2>👥 Integrantes del Grupo 1</h2>
+            <div class="team-list">
+                <div class="team-member">Jordy Chuquimarca</div>
+                <div class="team-member">Diego Patiño (Rep.)</div>
+                <div class="team-member">Wilmar Vaca</div>
+                <div class="team-member">Carlos Narvaez</div>
+                <div class="team-member">Jack Logacho</div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 Grupo 1 - Fundamentos de Investigación | Universidad Nacional de Chimborazo (UNACH)</p>
+    </footer>
+
+    <script>
+        // =========================================
+        // LÓGICA DEL CUESTIONARIO
+        // =========================================
+        
+        // 1. Consentimiento
+        const consentCheck = document.getElementById('consent-check');
+        const btnStart = document.getElementById('btn-start');
+        const introSection = document.getElementById('intro-section');
+        const surveyForm = document.getElementById('survey-form');
+        const filterSection = document.getElementById('filter-section');
+
+        consentCheck.addEventListener('change', (e) => {
+            btnStart.disabled = !e.target.checked;
+        });
+
+        btnStart.addEventListener('click', () => {
+            introSection.classList.add('hidden');
+            surveyForm.classList.remove('hidden');
+            filterSection.classList.remove('hidden');
+        });
+
+        // 2. Filtros (Lógica de saltos)
+        const f1Radios = document.querySelectorAll('input[name="f1"]');
+        const f2Group = document.getElementById('f2-group');
+        const f2Radios = document.querySelectorAll('input[name="f2"]');
+        const filterReject = document.getElementById('filter-reject');
+        const bloqueA = document.getElementById('bloque-a');
+        const bloqueB = document.getElementById('bloque-b');
+        const datosContexto = document.getElementById('datos-contexto');
+        const submitSection = document.getElementById('submit-section');
+
+        f1Radios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (e.target.value === 'no') {
+                    // Rechazo F1
+                    filterReject.classList.remove('hidden');
+                    f2Group.classList.add('hidden');
+                    bloqueA.classList.add('hidden');
+                    bloqueB.classList.add('hidden');
+                    datosContexto.classList.add('hidden');
+                    submitSection.classList.add('hidden');
+                } else {
+                    // Aprobado F1 -> Mostrar F2
+                    filterReject.classList.add('hidden');
+                    f2Group.classList.remove('hidden');
+                }
+            });
+        });
+
+        f2Radios.forEach(radio => {
+            radio.addEventListener('change', (e) => {
+                if (e.target.value === 'no') {
+                    // No usa IA -> Salta al cierre (solo datos de contexto)
+                    bloqueA.classList.add('hidden');
+                    bloqueB.classList.add('hidden');
+                    datosContexto.classList.remove('hidden');
+                    submitSection.classList.remove('hidden');
+                } else {
+                    // Usa IA -> Mostrar todo
+                    bloqueA.classList.remove('hidden');
+                    bloqueB.classList.remove('hidden');
+                    datosContexto.classList.remove('hidden');
+                    submitSection.classList.remove('hidden');
+                }
+            });
+        });
+
+        // 3. Envío del formulario (Simulado)
+        surveyForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            // Aquí podrías integrar Formspree, EmailJS o tu propio backend
+            // Por ahora, simulamos el éxito y ocultamos el botón
+            
+            submitSection.classList.add('hidden');
+            document.getElementById('success-message').classList.remove('hidden');
+            
+            // Scroll al mensaje de éxito
+            document.getElementById('success-message').scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+</body>
+</html>
